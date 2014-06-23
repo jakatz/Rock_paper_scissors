@@ -1,17 +1,17 @@
 require_relative 'spec_helper.rb'
 
 describe 'Round'  do
-  let( :test ){ RPS::Round.new( 0, 1, 2, nil ) }
+  let( :test ){ RPS::Round.new( 0, 'r', 'p', 2 ) }
   it 'has an id' do
     expect( test.id ).to eq( 0 )
   end
 
   it 'has at least 1 player' do
-    expect( test.player1 ).to eq( 1 )
+    expect( test.player1_move ).to eq( 'r' )
   end
 
   it 'does not have a winner' do
-    expect( test.winner ).to eq( nil )
+    expect( test.round_winner ).to eq( 2 )
   end
 
 
@@ -32,7 +32,7 @@ describe 'Round'  do
 
   describe '#mark_win' do
     context 'when a player has won' do
-      it 'updates the database with the winner' do
+      it 'returns the winner' do
       end
     end
   end
