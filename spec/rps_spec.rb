@@ -1,2 +1,6 @@
 require_relative 'spec_helper.rb'
-describe '#'
+describe '#rps' do
+  it 'takes ' do
+
+  end
+end
