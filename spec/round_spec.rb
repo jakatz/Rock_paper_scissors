@@ -7,11 +7,36 @@ describe 'Round'  do
   end
 
   it 'has at least 1 player' do
-    expect( test.player_1).to eq( 1 )
+    expect( test.player1 ).to eq( 1 )
   end
 
   it 'does not have a winner' do
-    expect( test.winner).to eq( nil )
+    expect( test.winner ).to eq( nil )
+  end
+
+
+  describe '#check_win' do
+    context 'no body has won 3 rounds' do
+      it 'returns nil' do
+
+      end
+    end
+
+
+    context 'someone has won 3 rounds' do
+      it 'returns the players id' do
+      end
+    end
+
+  end
+
+  describe '#mark_win' do
+    context 'when a player has won' do
+      it 'updates the database with the winner' do
+      end
+    end
   end
 
 end
+
+
