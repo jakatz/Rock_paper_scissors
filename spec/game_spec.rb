@@ -1,6 +1,6 @@
 require_relative 'spec_helper.rb'
 
-describe Game do
+describe RPS::Game do
   let(:test){ RPS::Game.new(0, 1, 2, nil)}
 
   it "exists" do
@@ -18,15 +18,14 @@ describe Game do
 
   describe '#mark_winner' do
     context "the game is over" do
-      it "sets the winner to a player's ID" do
+      xit "sets the winner to a player's ID" do
         # expect(test.winner).to eq(1)
       end
     end
 
     context "the game is not over" do
-      it "returns nil" do
+      xit "returns nil" do
       end
     end
   end
-
 end
