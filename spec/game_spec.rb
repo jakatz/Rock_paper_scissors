@@ -17,9 +17,16 @@ describe Game do
   end
 
   describe '#mark_winner' do
-    it "sets the winner to a player's ID" do
-      test.mark_winner(1)
-      expect(test.winner).to eq(1)
+    context "the game is over" do
+      it "sets the winner to a player's ID" do
+        # expect(test.winner).to eq(1)
+      end
+    end
+
+    context "the game is not over" do
+      it "returns nil" do
+      end
     end
   end
+
 end
