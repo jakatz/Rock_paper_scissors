@@ -6,7 +6,4 @@ class RPS::Round
     @player2 = player2
     @winner = winner
   end
-
-
-
 end
