@@ -28,16 +28,4 @@ describe RPS::Game do
       end
     end
   end
-
-  describe '#check_winner' do
-    context "a player has won" do
-      xit "returns the corresponding player object" do
-      end
-    end
-
-    context "no player has won" do
-      xit "returns nil" do
-      end
-    end
-  end
 end
