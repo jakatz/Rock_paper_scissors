@@ -1,3 +1,7 @@
+require 'spec_helper'
+require 'rspec'
+require 'pry-byebug'
+
 module RPS
 end
 
