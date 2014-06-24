@@ -56,7 +56,9 @@ describe 'ORM' do
           p2 = RPS.orm.add_player('Jon')
           game = RPS.orm.add_game(p1.id, p2.id, -1)
           RPS.orm.mark_winner(game, p1.id)
-
+          game = RPS.orm.select_game( game.id )
+          p1 = RPS.orm.select_player( p1.id )
+          game =
           expect(game.winner).to eq(p1.id)
         end
 
@@ -65,7 +67,9 @@ describe 'ORM' do
           p2 = RPS.orm.add_player('Jon')
           game = RPS.orm.add_game(p1.id, p2.id, -1)
           RPS.orm.mark_winner(game, p1.id)
-
+          RPS.orm.mark_round( p1.id, p2.id )
+          p1 = RPS.orm.select_player( p1.id )
+          game = RPS.orm.select_game( game.id )
           expect(p1.win_count).to eq(1)
           expect(p1.games_played).to eq(1)
           expect(p2.win_count).to eq(0)
@@ -83,6 +87,7 @@ describe 'ORM' do
 
         expect(round).to be_a(RPS::Round)
         expect(round.id).to be_a(Fixnum)
+        round = RPS.orm.select_round( round.id )
         expect(round.player1_move).to eq('r')
         expect(round.player2_move).to eq('p')
         expect(round.winner).to eq(2)
