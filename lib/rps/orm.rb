@@ -35,6 +35,8 @@ module RPS
         CREATE TABLE if NOT EXISTS players(
           id SERIAL PRIMARY KEY,
           name TEXT,
+          username TEXT,
+          password TEXT,
           win_count INTEGER,
           games_played INTEGER
         );
@@ -68,10 +70,10 @@ module RPS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding rows to tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def add_player(name, win_count = 0, games_played = 0)
+    def add_player(name, username, password, win_count = 0, games_played = 0)
       command = <<-SQL
-        INSERT INTO players(name, win_count, games_played)
-        VALUES('#{name}', '#{win_count}', '#{games_played}')
+        INSERT INTO players(name, username, password, win_count, games_played)
+        VALUES('#{name}', '#{username}', '#{password}', '#{win_count}', '#{games_played}')
         RETURNING *;
       SQL
 
@@ -79,6 +81,27 @@ module RPS
       p = @db_adapter.exec(command).values.first
       RPS::Player.new(p[0].to_i, p[1], p[2].to_i, p[3].to_i)
     end
+
+    def add_game(player1, player2, winner = -1)
+      command = <<-SQL
+        INSERT INTO games(player1, player2, winner)
+        VALUES('#{player1}', '#{player2}', '#{winner}')
+        RETURNING *;
+      SQL
+
+    def add_round(player1_move, player2_move, winner = play(player1_move, player2_move))
+      command = <<-SQL
+        INSERT INTO rounds(player1_move, player2_move, winner)
+        VALUES('#{player1_move}', '#{player2_move}', '#{winner}')
+        RETURNING *;
+      SQL
+
+      r = @db_adapter.exec(command).values.first
+      RPS::Round.new(r[0].to_i, r[1], r[2], r[3].to_i)
+    end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ selecting rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
     def select_player( pid )
       command = <<-SQL
@@ -90,12 +113,6 @@ module RPS
         result['win_count'].to_i, result['games_played'].to_i)
     end
 
-    def add_game(player1, player2, winner = -1)
-      command = <<-SQL
-        INSERT INTO games(player1, player2, winner)
-        VALUES('#{player1}', '#{player2}', '#{winner}')
-        RETURNING *;
-      SQL
 
       g = @db_adapter.exec(command).values.first
       RPS::Game.new(g[0].to_i, g[1].to_i, g[2].to_i, g[3].to_i)
@@ -111,16 +128,6 @@ module RPS
         result['player2'].to_i, result['winner'].to_i)
     end
 
-    def add_round(player1_move, player2_move, winner = play(player1_move, player2_move))
-      command = <<-SQL
-        INSERT INTO rounds(player1_move, player2_move, winner)
-        VALUES('#{player1_move}', '#{player2_move}', '#{winner}')
-        RETURNING *;
-      SQL
-
-      r = @db_adapter.exec(command).values.first
-      RPS::Round.new(r[0].to_i, r[1], r[2], r[3].to_i)
-    end
 
     def select_round( rid )
       command = <<-SQL
@@ -131,6 +138,8 @@ module RPS
       RPS::Round.new( result['id'].to_i, result['player1_move'],
         result['player2_move'], result['winner'].to_i)
     end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ updating rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def mark_winner(game, player_id)
       command = <<-SQL
@@ -152,7 +161,7 @@ module RPS
     end
   end
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ updating table values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ setting singleton ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
   def self.orm

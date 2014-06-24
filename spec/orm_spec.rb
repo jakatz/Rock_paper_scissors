@@ -29,7 +29,7 @@ describe 'ORM' do
   describe 'players table' do
     describe '#add_player' do
       it 'adds the player to the database and returns the Player instance' do
-        result = RPS.orm.add_player('Gideon')
+        result = RPS.orm.add_player('Gideon', 'gewulf', '1234')
         expect(result).to be_a(RPS::Player)
       end
     end
@@ -38,8 +38,8 @@ describe 'ORM' do
   describe 'games table' do
     describe '#add_game' do
       it 'adds the game to the database and returns the Game instance' do
-        p1 = RPS.orm.add_player('Gideon')
-        p2 = RPS.orm.add_player('Jon')
+        p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
+        p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
         game = RPS.orm.add_game(p1.id, p2.id, -1)
         expect(game).to be_a(RPS::Game)
         expect(game.id).to be_a(Fixnum)
@@ -52,8 +52,8 @@ describe 'ORM' do
     describe '#mark_winner' do
       context "the game does not yet have a winner" do
         it 'changes the game winner to the id of the winning player and returns nil' do
-          p1 = RPS.orm.add_player('Gideon')
-          p2 = RPS.orm.add_player('Jon')
+          p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
+          p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
           game = RPS.orm.add_game(p1.id, p2.id, -1)
           RPS.orm.mark_winner(game, p1.id)
           game = RPS.orm.select_game( game.id )
@@ -63,8 +63,8 @@ describe 'ORM' do
         end
 
         it "increases the player's win count by 1" do
-          p1 = RPS.orm.add_player('Gideon')
-          p2 = RPS.orm.add_player('Jon')
+          p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
+          p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
           game = RPS.orm.add_game(p1.id, p2.id, -1)
           RPS.orm.mark_winner(game, p1.id)
           RPS.orm.mark_round( p1.id, p2.id )
@@ -81,8 +81,8 @@ describe 'ORM' do
   describe 'rounds table' do
     describe '#add_round' do
       it 'adds the round to the database and returns the Round instance' do
-        p1 = RPS.orm.add_player('Gideon')
-        p2 = RPS.orm.add_player('Jon')
+        p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
+        p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
         round = RPS.orm.add_round('r', 'p')
 
         expect(round).to be_a(RPS::Round)
