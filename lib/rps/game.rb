@@ -9,6 +9,7 @@ class RPS::Game
     @winner = winner
   end
 
-  def mark_winner(pid)
+  def mark_winner(player_id)
+    @winner = player_id
   end
 end
