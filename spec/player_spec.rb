@@ -1,7 +1,7 @@
 require_relative 'spec_helper.rb'
 
 describe 'Player Class' do
-  let(:player) {RPS::Player.new(1, 'Gideon', 5, 9)} #id, name, wins, games_played
+  let(:player) {RPS::Player.new(1, 'Gideon', 'gewulf', '1234', 5, 9)} #id, name, wins, games_played
   describe '#initialize' do
     it 'initializes values in player class' do
       expect(player.id).to eq(1)
