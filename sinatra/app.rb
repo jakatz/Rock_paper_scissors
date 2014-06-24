@@ -6,3 +6,5 @@ get '/game' do
   erb :sign_in
 end
 
+puts '/game' do
+
