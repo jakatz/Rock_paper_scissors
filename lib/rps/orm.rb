@@ -36,7 +36,7 @@ module RPS
           id SERIAL PRIMARY KEY,
           name TEXT,
           win_count INTEGER,
-          games_player INTEGER
+          games_played INTEGER
         );
       SQL
       @db_adapter.exec(command)
@@ -68,10 +68,10 @@ module RPS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding rows to tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def add_player(name, win_count = -1, games_player = -1)
+    def add_player(name, win_count = 0, games_played = -1)
       command = <<-SQL
-        INSERT INTO players(name, win_count, games_player)
-        VALUES('#{name}', '#{win_count}', '#{games_player}')
+        INSERT INTO players(name, win_count, games_played)
+        VALUES('#{name}', '#{win_count}', '#{games_played}')
         RETURNING *;
       SQL
 
@@ -101,7 +101,20 @@ module RPS
       r = @db_adapter.exec(command).values.first
       RPS::Round.new(r[0].to_i, r[1], r[2], r[3].to_i)
     end
+
+    def mark_winner(game, player_id)
+      command = <<-SQL
+        UPDATE games SET winner = '#{player_id}'
+        WHERE id = '#{game.id}'
+        RETURNING winner;
+      SQL
+
+      result = @db_adapter.exec(command)
+    end
   end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ updating table values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
   def self.orm
     @__orm_instance ||= ORM.new

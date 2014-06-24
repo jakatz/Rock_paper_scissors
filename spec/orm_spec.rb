@@ -48,6 +48,30 @@ describe 'ORM' do
         expect(game.winner).to eq(-1)
       end
     end
+
+    describe '#mark_winner' do
+      context "the game does not yet have a winner" do
+        it 'changes the game winner to the id of the winning player and returns nil' do
+          p1 = RPS.orm.add_player('Gideon')
+          p2 = RPS.orm.add_player('Jon')
+          game = RPS.orm.add_game(p1.id, p2.id, -1)
+          RPS.orm.mark_winner(game, p1.id)
+
+          expect(game.winner).to eq(p1.id)
+        end
+
+        it "increases the player's win count by 1" do
+          p1 = RPS.orm.add_player('Gideon')
+          p2 = RPS.orm.add_player('Jon')
+          game = RPS.orm.add_game(p1.id, p2.id, -1)
+          RPS.orm.mark_winner(game, p1.id)
+
+          expect(p1.win_count).to eq(1)
+          expect(p1.games_played).to eq(1)
+          expect(p2.win_count).to eq(0)
+        end
+      end
+    end
   end
 
   describe 'rounds table' do
