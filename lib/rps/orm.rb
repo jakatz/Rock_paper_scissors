@@ -10,15 +10,15 @@ module RPS
     def create_tables
       create_players_table
       create_games_table
-      # create_moves_table
+      create_rounds_table
     end
 
     def drop_tables
       command = <<-SQL
         DROP TABLE players;
         DROP TABLE games;
+        DROP TABLE rounds;
       SQL
-        # DROP TABLE rounds;
 
       @db_adapter.exec(command)
     end
@@ -27,6 +27,8 @@ module RPS
       drop_tables
       create_tables
     end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ creating tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def create_players_table
       command = <<-SQL
@@ -52,6 +54,20 @@ module RPS
       @db_adapter.exec(command)
     end
 
+    def create_rounds_table
+      command = <<-SQL
+        CREATE TABLE if NOT EXISTS rounds(
+          id SERIAL PRIMARY KEY,
+          player1_move TEXT,
+          player2_move TEXT,
+          winner integer
+        );
+      SQL
+      @db_adapter.exec(command)
+    end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding rows to tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     def add_player(name, win_count = -1, games_player = -1)
       command = <<-SQL
         INSERT INTO players(name, win_count, games_player)
@@ -73,6 +89,17 @@ module RPS
 
       g = @db_adapter.exec(command).values.first
       RPS::Game.new(g[0].to_i, g[1].to_i, g[2].to_i, g[3].to_i)
+    end
+
+    def add_round(player1_move, player2_move, winner = play(player1_move, player2_move))
+      command = <<-SQL
+        INSERT INTO rounds(player1_move, player2_move, winner)
+        VALUES('#{player1_move}', '#{player2_move}', '#{winner}')
+        RETURNING *;
+      SQL
+
+      r = @db_adapter.exec(command).values.first
+      RPS::Round.new(r[0].to_i, r[1], r[2], r[3].to_i)
     end
   end
 

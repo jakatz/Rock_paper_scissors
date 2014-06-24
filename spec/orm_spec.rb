@@ -49,4 +49,20 @@ describe 'ORM' do
       end
     end
   end
+
+  describe 'rounds table' do
+    describe '#add_round' do
+      it 'adds the round to the database and returns the Round instance' do
+        p1 = RPS.orm.add_player('Gideon')
+        p2 = RPS.orm.add_player('Jon')
+        round = RPS.orm.add_round('r', 'p')
+
+        expect(round).to be_a(RPS::Round)
+        expect(round.id).to be_a(Fixnum)
+        expect(round.player1_move).to eq('r')
+        expect(round.player2_move).to eq('p')
+        expect(round.winner).to eq(2)
+      end
+    end
+  end
 end
