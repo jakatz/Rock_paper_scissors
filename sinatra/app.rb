@@ -6,5 +6,6 @@ get '/game' do
   erb :sign_in
 end
 
-puts '/game' do
-
+get '/friends' do
+  erb :friends
+end
