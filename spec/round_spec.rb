@@ -11,7 +11,7 @@ describe 'Round'  do
   end
 
   it 'does not have a winner' do
-    expect( test.round_winner ).to eq( 2 )
+    expect( test.winner ).to eq( 2 )
   end
 
 

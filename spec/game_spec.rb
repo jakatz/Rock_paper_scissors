@@ -16,16 +16,16 @@ describe RPS::Game do
     end
   end
 
-  describe '#mark_winner' do
-    context "the game is over" do
-      xit "sets the winner to a player's ID" do
-        # expect(test.winner).to eq(1)
-      end
-    end
+  # describe '#mark_winner' do
+  #   context "the game is over" do
+  #     xit "sets the winner to a player's ID" do
+  #       # expect(test.winner).to eq(1)
+  #     end
+  #   end
 
-    context "the game is not over" do
-      xit "returns nil" do
-      end
-    end
-  end
+  #   context "the game is not over" do
+  #     xit "returns nil" do
+  #     end
+  #   end
+  # end
 end

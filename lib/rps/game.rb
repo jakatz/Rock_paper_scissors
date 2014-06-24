@@ -1,5 +1,6 @@
 class RPS::Game
-  attr_accessor :id, :player1, :player2, :winner
+  attr_reader :id, :player1, :player2
+  attr_accessor :winner
 
   def initialize(id, player1, player2, winner = -1)
     @id = id
