@@ -2,13 +2,21 @@
 <html>
 <head>
   <title>Rock Paper Scissors</title>
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.1.1/css/foundation.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="/views/js/foundation.min.js"></script>
-  <!-- // <script src="js/vendor/modernizr.js"></script> -->
-</head>
-<body>
+   <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+  <script src="/js/vendor/modernizr.js"></script>
 
-  <%= yield %>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.1.1/css/foundation.css">
+  <linl rel = 'stylesheet' href='/app.css'>
+
+<body>
+  <script src="/js/vendor/jquery.js"></script>
+  <script src="/js/vendor/fastclick.js"></script>
+
+  <%=yield%>
+
+  <script src="/js/foundation.min.js"></script>
+  <script>
+  $(document).foundation();
+  </script>
 </body>
 </html>
