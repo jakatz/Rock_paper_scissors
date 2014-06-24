@@ -58,7 +58,6 @@ describe 'ORM' do
           RPS.orm.mark_winner(game, p1.id)
           game = RPS.orm.select_game( game.id )
           p1 = RPS.orm.select_player( p1.id )
-          game =
           expect(game.winner).to eq(p1.id)
         end
 

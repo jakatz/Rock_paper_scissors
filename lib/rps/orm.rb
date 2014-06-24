@@ -79,7 +79,7 @@ module RPS
 
       # ["1", "Gideon", "-1", "-1"]
       p = @db_adapter.exec(command).values.first
-      RPS::Player.new(p[0].to_i, p[1], p[2].to_i, p[3].to_i)
+      RPS::Player.new(p[0].to_i, p[1], p[2], p[3], p[4].to_i, p[5].to_i)
     end
 
     def add_game(player1, player2, winner = -1)
@@ -109,8 +109,8 @@ module RPS
         WHERE id = '#{ pid }';
       SQL
       result = @db_adapter.exec(command)[0]
-      Player.new( result['id'].to_i, result['name'],
-        result['win_count'].to_i, result['games_played'].to_i)
+      Player.new( result['id'].to_i, result['name'], result['username'],
+        result['password'], result['win_count'].to_i, result['games_played'].to_i)
     end
 
 
