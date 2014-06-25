@@ -4,13 +4,6 @@ enable :sessions
 
 set :bind, '0.0.0.0'
 
-get '/sign_in' do
-  erb :sign_in
-end
-
-get '/game' do
-  erb :game
-end
 
 post '/sign_in' do
   puts params
@@ -19,4 +12,7 @@ post '/sign_in' do
   if u
     session[:user_id] = u.user_id
   end
+
+get '/friends' do
+  erb :friends
 end
