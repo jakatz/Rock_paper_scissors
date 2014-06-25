@@ -29,7 +29,7 @@ describe 'ORM' do
   describe 'players table' do
     describe '#add_player' do
       it 'adds the player to the database and returns the Player instance' do
-        result = RPS.orm.add_player('Gideon', 'gewulf', '1234')
+        result = RPS.orm.add_player('Gideon', '1234')
         expect(result).to be_a(RPS::Player)
       end
     end
@@ -38,9 +38,9 @@ describe 'ORM' do
   describe 'games table' do
     describe '#add_game' do
       it 'adds the game to the database and returns the Game instance' do
-        p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
-        p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
-        game = RPS.orm.add_game(p1.id, p2.id, -1)
+        p1 = RPS.orm.add_player('Gideon', '1234')
+        p2 = RPS.orm.add_player('Jon', '321')
+        game = RPS.orm.add_game(p1.id, p2.id)
         expect(game).to be_a(RPS::Game)
         expect(game.id).to be_a(Fixnum)
         expect(game.player1).to eq(p1.id)
@@ -52,8 +52,8 @@ describe 'ORM' do
     describe '#mark_winner' do
       context "the game does not yet have a winner" do
         it 'changes the game winner to the id of the winning player and returns nil' do
-          p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
-          p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
+          p1 = RPS.orm.add_player('Gideon', '1234')
+          p2 = RPS.orm.add_player('Jon', '321')
           game = RPS.orm.add_game(p1.id, p2.id, -1)
           RPS.orm.mark_winner(game, p1.id)
           game = RPS.orm.select_game( game.id )
@@ -62,9 +62,9 @@ describe 'ORM' do
         end
 
         it "increases the player's win count by 1" do
-          p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
-          p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
-          game = RPS.orm.add_game(p1.id, p2.id, -1)
+          p1 = RPS.orm.add_player('Gideon', '1234')
+          p2 = RPS.orm.add_player('Jon', '321')
+          game = RPS.orm.add_game(p1.id, p2.id)
           RPS.orm.mark_winner(game, p1.id)
           RPS.orm.mark_round( p1.id, p2.id )
           p1 = RPS.orm.select_player( p1.id )
@@ -75,21 +75,77 @@ describe 'ORM' do
         end
       end
     end
+
+    describe '#list_games_by_player' do
+      it "returns an array of all games for that player" do
+        p1 = RPS.orm.add_player('Gideon', '1234')
+        p2 = RPS.orm.add_player('Jon', '321')
+        p3 = RPS.orm.add_player('Jered', '321')
+        g1 = RPS.orm.add_game(p1.id, p2.id)
+        list1 = RPS.orm.list_games_by_player(p1.id)
+        expect(list1.size).to eq(1)
+        expect(list1.first).to eq(g1)
+
+        g2 = RPS.orm.add_game(p1.id, p3.id)
+        list2 = RPS.orm.list_games_by_player(p1.id)
+        binding.pry
+        expect(list2.size).to eq(2)
+        expect(list2.last).to eq(g2)
+      end
+    end
+
+    # describe "#count_rounds" do
+    #   context "the game is not over" do
+    #     it "" do
+    #       p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
+    #       p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
+    #       game = RPS.orm.add_game(p1.id, p2.id, -1)
+    #     end
+    #   end
+
+    #   context "the game is over" do
+    #     it "" do
+    #       p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
+    #       p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
+    #       game = RPS.orm.add_game(p1.id, p2.id, -1)
+    #     end
+    #   end
+    # end
   end
 
   describe 'rounds table' do
-    describe '#add_round' do
+    describe '#initialize_round' do
       it 'adds the round to the database and returns the Round instance' do
-        p1 = RPS.orm.add_player('Gideon', 'gewulf', '1234')
-        p2 = RPS.orm.add_player('Jon', 'meowmix', '321')
-        round = RPS.orm.add_round('r', 'p')
+        p1 = RPS.orm.add_player('Gideon', '1234')
+        p2 = RPS.orm.add_player('Jon', '321')
+        g = RPS.orm.add_game(p1.id, p2.id)
+        round = RPS.orm.initialize_round(g.id, 'r')
 
         expect(round).to be_a(RPS::Round)
         expect(round.id).to be_a(Fixnum)
         round = RPS.orm.select_round( round.id )
         expect(round.player1_move).to eq('r')
-        expect(round.player2_move).to eq('p')
-        expect(round.winner).to eq(2)
+        expect(round.player2_move).to eq("")
+        expect(round.winner).to eq(-1)
+      end
+    end
+
+    describe '#add_move' do
+      context 'the round has not been initialized' do
+        it 'returns nil' do
+        end
+      end
+
+      context 'the round has been initialized' do
+        it 'adds the second move to the round' do
+          p1 = RPS.orm.add_player('Gideon', '1234')
+          p2 = RPS.orm.add_player('Jon', '321')
+          g = RPS.orm.add_game(p1.id, p2.id)
+          round = RPS.orm.initialize_round(g.id, 'r')
+
+          RPS.orm.add_move(round.id, p2.id, 's')
+          expect(round.player2_move).to eq('s')
+        end
       end
     end
   end
