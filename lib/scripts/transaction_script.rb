@@ -1,6 +1,6 @@
 require 'ostruct'
 
-module MyApp
+module RPS
 
   class TransactionScript
     def self.run(inputs)
@@ -16,3 +16,4 @@ module MyApp
     end
   end
 end
+
