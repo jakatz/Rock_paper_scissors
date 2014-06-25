@@ -84,13 +84,12 @@ describe 'ORM' do
         g1 = RPS.orm.add_game(p1.id, p2.id)
         list1 = RPS.orm.list_games_by_player(p1.id)
         expect(list1.size).to eq(1)
-        expect(list1.first).to eq(g1)
+        expect(list1.first.id).to eq(g1.id)
 
         g2 = RPS.orm.add_game(p1.id, p3.id)
         list2 = RPS.orm.list_games_by_player(p1.id)
-        binding.pry
         expect(list2.size).to eq(2)
-        expect(list2.last).to eq(g2)
+        expect(list2.last.id).to eq(g2.id)
       end
     end
 
@@ -144,6 +143,7 @@ describe 'ORM' do
           round = RPS.orm.initialize_round(g.id, 'r')
 
           RPS.orm.add_move(round.id, p2.id, 's')
+          round= RPS.orm.select_round( round.id )
           expect(round.player2_move).to eq('s')
         end
       end

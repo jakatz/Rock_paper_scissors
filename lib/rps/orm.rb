@@ -1,5 +1,5 @@
 require 'pg'
-
+#
 module RPS
   class ORM
     attr_reader :db_adapter
@@ -143,11 +143,10 @@ module RPS
         WHERE player1 = '#{player_id}' OR player2 = '#{player_id}'
       SQL
 
-      result = @db_adapter.exec(command).values
-
-      result.collect do |game|
-        RPS::Game.new( result['id'].to_i, result['player1'].to_i,
-        result['player2'].to_i, result['winner'].to_i)
+      result = @db_adapter.exec(command)
+      result.map do |game|
+        RPS::Game.new( game['id'].to_i, game['player1'].to_i,
+        game['player2'].to_i, game['winner'].to_i )
       end
     end
 
