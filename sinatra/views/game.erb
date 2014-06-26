@@ -74,11 +74,12 @@
         </tr>
       </thead>
       <tbody>
-        <%games = RPS.orm.select_games_by_player(sesson[:username]%>
-        <% games.each do |game|%>
+        <% @games.each do |game| %>
+        <% player2 = RPS.orm.select_player_by_id( game.player1 )%>
+        <% player1 = RPS.orm.select_player_by_id( game.player2 )%>
         <tr>
-          <td class='text-center' ><%= game.player1 %></td>
-          <td class='text-center'><%= game.player2 %></td>
+          <td class='text-center' ><%= player1.name %></td>
+          <td class='text-center'><%= player2.name %></td>
           <td><button class = 'tiny'>review game</button></td>
         </tr>
        <% end %>

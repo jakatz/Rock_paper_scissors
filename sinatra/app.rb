@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'pry-byebug'
 require_relative "../lib/rps-manager.rb"
 
 enable :sessions
@@ -20,10 +21,6 @@ post '/sign_in' do
   end
 end
 
-get '/friends' do
-  erb :friends
-end
-
 post '/create_user' do
   u = RPS::Create_player.run(params)
   if u.success?
@@ -32,6 +29,29 @@ post '/create_user' do
   else
     erb :sign_in
   end
+end
+
+get '/friends' do
+  erb :friends
+end
+
+get '/game' do
+  puts params
+  puts session
+  binding.pry
+  @player1 = RPS.orm.select_player( session[:username] )
+  @player2 = RPS.orm.select_player( params["player2"] )
+  RPS.orm.add_game(player1.id, player2.id)
+  @games = RPS.orm.select_games_by_player( session[:username] )
+  erb :game
+end
+
+
+
+
+post'/gameplay' do
+  u = params
+
 end
 
 post '/scissors' do

@@ -136,6 +136,21 @@ module RPS
       end
     end
 
+    def select_player_by_id( id )
+      command = <<-SQL
+        SELECT * FROM players
+        WHERE id = '#{ id }';
+      SQL
+        result = @db_adapter.exec(command)
+      unless result.values==[]
+        result = result.values.first
+        Player.new( result[0].to_i, result[1],
+          result[2], result[3].to_i, result[4].to_i)
+      else
+        nil
+      end
+    end
+
     def select_game( gid )
       command = <<-SQL
         SELECT * FROM games
