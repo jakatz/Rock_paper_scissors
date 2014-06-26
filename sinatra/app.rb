@@ -5,15 +5,15 @@ enable :sessions
 set :bind, '0.0.0.0'
 
 get '/sign_in' do
-  erb: sign_in
+  erb :sign_in
 end
 
 post '/sign_in' do
   puts params
-  u = User.sign_in(params[:username], params[:password])
+  u = RPS::Sign_in.run(params)
 
   if u
-    session[:user_id] = u.user_id
+    session[:username] = u.username
   end
 end
 
