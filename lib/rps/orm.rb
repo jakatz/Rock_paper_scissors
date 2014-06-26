@@ -106,14 +106,18 @@ module RPS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ selecting rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    def select_player( pid )
+    def select_player( username )
       command = <<-SQL
         SELECT * FROM players
-        WHERE id = '#{ pid }';
+        WHERE username = '#{ username }';
       SQL
-      result = @db_adapter.exec(command)[0]
-      Player.new( result['id'].to_i, result['username'],
-        result['password'], result['win_count'].to_i, result['games_played'].to_i)
+        result = @db_adapter.exec(command)
+      unless result.values==[]
+        Player.new( result[0]['id'].to_i, result[0]['username'],
+          result[0]['password'], result[0]['win_count'].to_i, result[0]['games_played'].to_i)
+      else
+        nil
+      end
     end
 
     def select_game( gid )

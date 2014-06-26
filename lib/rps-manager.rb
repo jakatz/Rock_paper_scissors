@@ -10,6 +10,7 @@ require_relative 'rps/orm.rb'
 require_relative 'rps/player.rb'
 require_relative 'rps/round.rb'
 require_relative 'rps/rps.rb'
+require_relative 'scripts/transaction_script.rb'
 require_relative 'scripts/sign_in.rb'
 require_relative 'scripts/create_player.rb'
 
