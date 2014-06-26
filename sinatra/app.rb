@@ -33,3 +33,17 @@ post '/create_user' do
     erb :sign_in
   end
 end
+
+post '/scissors' do
+  erb :scissors
+end
+
+post '/paper' do
+  erb :paper
+end
+
+post '/rock' do
+  erb :rock
+  # RPS.orm.initialize_round('r'
+end
+
