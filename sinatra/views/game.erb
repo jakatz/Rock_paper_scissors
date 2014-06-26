@@ -49,16 +49,16 @@
         </tr>
       </thead>
       <tbody>
+        <% @active_games.each do |game| %>
+        <% player1 = RPS.orm.select_player_by_id( game.player1 )%>
+        <% player2 = RPS.orm.select_player_by_id( game.player2 )%>
+
         <tr>
-          <td class='text-center'>Jered</td>
-          <td class='text-center'>Jon</td>
-          <td><button class = 'tiny'>Make your move</button></td>
+          <td class='text-center' ><%= player1.username %></td>
+          <td class='text-center'><%= player2.username %></td>
+          <td><button class = 'tiny'>review game</button></td>
         </tr>
-        <tr>
-          <td class='text-center'>Jered</td>
-          <td class='text-center'>Jon</td>
-          <td><button class = 'tiny'>Make your move</button></td>
-        </tr>
+       <% end %>
       </tbody>
     </table>
   </div>
@@ -74,12 +74,13 @@
         </tr>
       </thead>
       <tbody>
-        <% @games.each do |game| %>
-        <% player2 = RPS.orm.select_player_by_id( game.player1 )%>
-        <% player1 = RPS.orm.select_player_by_id( game.player2 )%>
+        <% @inactive_games.each do |game| %>
+        <% player1 = RPS.orm.select_player_by_id( game.player1 )%>
+        <% player2 = RPS.orm.select_player_by_id( game.player2 )%>
+
         <tr>
-          <td class='text-center' ><%= player1.name %></td>
-          <td class='text-center'><%= player2.name %></td>
+          <td class='text-center' ><%= player1.username %></td>
+          <td class='text-center'><%= player2.username %></td>
           <td><button class = 'tiny'>review game</button></td>
         </tr>
        <% end %>

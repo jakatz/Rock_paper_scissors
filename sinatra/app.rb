@@ -38,32 +38,15 @@ end
 get '/game' do
   puts params
   puts session
-  binding.pry
   @player1 = RPS.orm.select_player( session[:username] )
   @player2 = RPS.orm.select_player( params["player2"] )
-  RPS.orm.add_game(player1.id, player2.id)
-  @games = RPS.orm.select_games_by_player( session[:username] )
+  RPS.orm.add_game(@player1.id, @player2.id)
+
+  @games = RPS.orm.list_games_by_player( @player1.id )
+  @active_games = @games.select{ |game| game.winner == -1 }
+  @inactive_games = @games.select{ |game| game.winner != -1 }
   erb :game
 end
 
 
-
-
-post'/gameplay' do
-  u = params
-
-end
-
-post '/scissors' do
-  erb :scissors
-end
-
-post '/paper' do
-  erb :paper
-end
-
-post '/rock' do
-  erb :rock
-  # RPS.orm.initialize_round('r'
-end
 
