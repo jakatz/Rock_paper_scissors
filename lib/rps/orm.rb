@@ -113,8 +113,9 @@ module RPS
       SQL
         result = @db_adapter.exec(command)
       unless result.values==[]
-        Player.new( result[0]['id'].to_i, result[0]['username'],
-          result[0]['password'], result[0]['win_count'].to_i, result[0]['games_played'].to_i)
+        result = result.values.first
+        Player.new( result[0].to_i, result[1],
+          result[2], result[3].to_i, result[4].to_i)
       else
         nil
       end

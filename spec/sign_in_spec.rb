@@ -33,10 +33,9 @@ describe 'Sign_in' do
 
     it 'returns an player if there is no error' do
       player = RPS.orm.add_player( 'Gideon', '1234'  )
-
-      result = RPS::Sign_in.run( password: '1234', name: 'Gideon' )
+      result = RPS::Sign_in.run({password: '1234', username: 'Gideon'})
       expect( result.success? ).to eq(true)
-      expect( result.player.id ).to eq( 1 )
+      expect( result.player.username ).to eq( 'Gideon' )
     end
   end
 end
