@@ -1,10 +1,11 @@
 require 'pg'
-
+#
 module RPS
   class ORM
     attr_reader :db_adapter
     def initialize
-      @db_adapter = PG.connect(host: 'localhost', dbname: 'rps-test')
+      @db_adapter = PG.connect(host: 'localhost', dbname: 'rps')
+      create_tables
     end
 
     def create_tables
@@ -16,8 +17,8 @@ module RPS
     def drop_tables
       command = <<-SQL
         DROP TABLE players;
-        DROP TABLE games;
         DROP TABLE rounds;
+        DROP TABLE games;
       SQL
 
       @db_adapter.exec(command)
@@ -34,7 +35,6 @@ module RPS
       command = <<-SQL
         CREATE TABLE if NOT EXISTS players(
           id SERIAL PRIMARY KEY,
-          name TEXT,
           username TEXT,
           password TEXT,
           win_count INTEGER,
@@ -60,9 +60,10 @@ module RPS
       command = <<-SQL
         CREATE TABLE if NOT EXISTS rounds(
           id SERIAL PRIMARY KEY,
+          game_id INTEGER REFERENCES games(id),
           player1_move TEXT,
           player2_move TEXT,
-          winner integer
+          winner INTEGER
         );
       SQL
       @db_adapter.exec(command)
@@ -70,16 +71,15 @@ module RPS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding rows to tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def add_player(name, username, password, win_count = 0, games_played = 0)
+    def add_player(username, password, win_count = 0, games_played = 0)
       command = <<-SQL
-        INSERT INTO players(name, username, password, win_count, games_played)
-        VALUES('#{name}', '#{username}', '#{password}', '#{win_count}', '#{games_played}')
+        INSERT INTO players(username, password, win_count, games_played)
+        VALUES('#{username}', '#{password}', '#{win_count}', '#{games_played}')
         RETURNING *;
       SQL
 
-      # ["1", "Gideon", "-1", "-1"]
       p = @db_adapter.exec(command).values.first
-      RPS::Player.new(p[0].to_i, p[1], p[2], p[3], p[4].to_i, p[5].to_i)
+      RPS::Player.new(p[0].to_i, p[1], p[2], p[3].to_i, p[4].to_i)
     end
 
     def add_game(player1, player2, winner = -1)
@@ -89,10 +89,14 @@ module RPS
         RETURNING *;
       SQL
 
-    def add_round(player1_move, player2_move, winner = play(player1_move, player2_move))
+      g = @db_adapter.exec(command).values.first
+      RPS::Game.new(g[0].to_i, g[1].to_i, g[2].to_i, g[3].to_i)
+    end
+
+    def initialize_round(game_id, player1_move, player2_move = nil, winner = -1)
       command = <<-SQL
-        INSERT INTO rounds(player1_move, player2_move, winner)
-        VALUES('#{player1_move}', '#{player2_move}', '#{winner}')
+        INSERT INTO rounds(game_id, player1_move, player2_move, winner)
+        VALUES('#{game_id}', '#{player1_move}', '#{player2_move}', '#{winner}')
         RETURNING *;
       SQL
 
@@ -103,19 +107,19 @@ module RPS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ selecting rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    def select_player( pid )
+    def select_player( username )
       command = <<-SQL
         SELECT * FROM players
-        WHERE id = '#{ pid }';
+        WHERE username = '#{ username }';
       SQL
-      result = @db_adapter.exec(command)[0]
-      Player.new( result['id'].to_i, result['name'], result['username'],
-        result['password'], result['win_count'].to_i, result['games_played'].to_i)
-    end
-
-
-      g = @db_adapter.exec(command).values.first
-      RPS::Game.new(g[0].to_i, g[1].to_i, g[2].to_i, g[3].to_i)
+        result = @db_adapter.exec(command)
+      unless result.values==[]
+        result = result.values.first
+        Player.new( result[0].to_i, result[1],
+          result[2], result[3].to_i, result[4].to_i)
+      else
+        nil
+      end
     end
 
     def select_game( gid )
@@ -139,6 +143,19 @@ module RPS
         result['player2_move'], result['winner'].to_i)
     end
 
+    def list_games_by_player( player_id )
+      command = <<-SQL
+        SELECT * FROM games
+        WHERE player1 = '#{player_id}' OR player2 = '#{player_id}'
+      SQL
+
+      result = @db_adapter.exec(command)
+      result.map do |game|
+        RPS::Game.new( game['id'].to_i, game['player1'].to_i,
+        game['player2'].to_i, game['winner'].to_i )
+      end
+    end
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ updating rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def mark_winner(game, player_id)
@@ -157,6 +174,16 @@ module RPS
       UPDATE players SET games_played = games_played+1
       where id = '#{ player1_id }' OR id = '#{ player2_id }'
       SQL
+
+      result = @db_adapter.exec(command)
+    end
+
+    def add_move(round_id, player_id, player_move)
+      command = <<-SQL
+      UPDATE rounds SET player2_move = '#{ player_move }'
+      where id = '#{round_id}'
+      SQL
+
       result = @db_adapter.exec(command)
     end
   end
