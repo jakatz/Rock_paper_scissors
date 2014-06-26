@@ -93,6 +93,20 @@ describe 'ORM' do
       end
     end
 
+    describe '#list_players' do
+      it "returns an array of all games for that player" do
+        p1 = RPS.orm.add_player('Gideon', '1234')
+        p2 = RPS.orm.add_player('Jon', '321')
+        p3 = RPS.orm.add_player('Jered', '321')
+        list1 = RPS.orm.list_players
+        expect(list1.size).to eq(3)
+
+        p4 = RPS.orm.add_player('tom', '321')
+        list2 = RPS.orm.list_players
+        expect(list2.size).to eq(4)
+      end
+    end
+
     # describe "#count_rounds" do
     #   context "the game is not over" do
     #     it "" do

@@ -71,6 +71,8 @@ module RPS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding rows to tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+
     def add_player(username, password, win_count = 0, games_played = 0)
       command = <<-SQL
         INSERT INTO players(username, password, win_count, games_played)
@@ -106,6 +108,18 @@ module RPS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ selecting rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    def list_players
+      command = <<-SQL
+      SELECT * FROM players
+      SQL
+      result = @db_adapter.exec( command )
+      players = []
+      result.values.each do |player|
+        players<<Player.new( player[0].to_i, player[1],
+          player[2], player[3].to_i, player[4].to_i)
+      end
+      return players
+    end
 
     def select_player( username )
       command = <<-SQL
