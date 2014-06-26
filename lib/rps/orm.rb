@@ -1,5 +1,5 @@
 require 'pg'
-#
+
 module RPS
   class ORM
     attr_reader :db_adapter
@@ -192,28 +192,48 @@ module RPS
         UPDATE games SET winner = '#{ player_id }'
         WHERE id = '#{game.id}';
         UPDATE players SET win_count = win_count+1
-        WHERE id = '#{ player_id }'
+        WHERE id = '#{ player_id }';
       SQL
 
       result = @db_adapter.exec(command)
     end
 
-    def mark_round( player1_id, player2_id )
-      command  = <<-SQL
-      UPDATE players SET games_played = games_played+1
-      where id = '#{ player1_id }' OR id = '#{ player2_id }'
-      SQL
+    # do we ever use this method??
 
-      result = @db_adapter.exec(command)
-    end
+    # def mark_round( player1_id, player2_id )
+    #   command  = <<-SQL
+    #   UPDATE players SET games_played = games_played+1
+    #   WHERE id = '#{ player1_id }' OR id = '#{ player2_id }'
+    #   SQL
+
+    #   result = @db_adapter.exec(command)
+    # end
 
     def add_move(round_id, player_id, player_move)
       command = <<-SQL
       UPDATE rounds SET player2_move = '#{ player_move }'
-      where id = '#{round_id}'
+      WHERE id = '#{round_id}'
       SQL
 
       result = @db_adapter.exec(command)
+      set_winner(round_id)
+    end
+
+    def set_winner(rid)
+      # find moves
+      command = <<-SQL
+        SELECT player1_move, player2_move FROM rounds
+        WHERE id = '#{rid}'
+      SQL
+      result = @db_adapter.exec(command).values.first
+      winner = play(result[0], result[1])
+
+      # update winner
+      command = <<-SQL
+        UPDATE rounds SET winner = '#{winner}'
+        WHERE id = '#{rid}'
+      SQL
+      @db_adapter.exec(command)
     end
   end
 
