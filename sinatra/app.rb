@@ -1,4 +1,5 @@
 require 'sinatra'
+require_relative "../lib/rps-manager.rb"
 
 enable :sessions
 
@@ -9,14 +10,26 @@ get '/sign_in' do
 end
 
 post '/sign_in' do
-  puts params
   u = RPS::Sign_in.run(params)
 
-  if u
-    session[:username] = u.username
+  if u.success?
+    session[:username] = u.player.username
+    erb :friends
+  else
+    erb :sign_in
   end
 end
 
 get '/friends' do
   erb :friends
+end
+
+post '/create_user' do
+  u = RPS::Create_player.run(params)
+  if u.success?
+    session[:username] = u.player.username
+    erb :friends
+  else
+    erb :sign_in
+  end
 end

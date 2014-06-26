@@ -4,7 +4,8 @@ module RPS
   class ORM
     attr_reader :db_adapter
     def initialize
-      @db_adapter = PG.connect(host: 'localhost', dbname: 'rps-test')
+      @db_adapter = PG.connect(host: 'localhost', dbname: 'rps')
+      create_tables
     end
 
     def create_tables
@@ -33,8 +34,8 @@ module RPS
     def create_players_table
       command = <<-SQL
         CREATE TABLE if NOT EXISTS players(
-          id SERIAL,
-          username TEXT PRIMARY KEY,
+          id SERIAL PRIMARY KEY,
+          username TEXT,
           password TEXT,
           win_count INTEGER,
           games_played INTEGER
