@@ -1,5 +1,6 @@
 require 'sinatra'
-require 'pry-byebug'
+require 'pry-byebug' if development?
+require "sinatra/reloader" if development?
 require_relative "../lib/rps-manager.rb"
 
 enable :sessions
