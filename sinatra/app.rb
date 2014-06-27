@@ -48,5 +48,8 @@ get '/game' do
   erb :game
 end
 
+get '/gameplay' do
+  erb :gameplay
+end
 
 

@@ -1,11 +1,36 @@
-<form method="POST" action='/rock'>
-  <button type='submit' class="button">Rock</a>
-</form>
 
-<form method="POST" action='/paper'>
-  <button type='submit' class="button">Paper</button>
-</form>
+<nav class="top-bar" data-topbar>
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">R P S</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
+  </ul>
+  <section class="top-bar-section">
+    <!-- Right Nav Section -->
+    <ul class="right">
+      <li class="has-dropdown">
+        <a href="#">Options</a>
+        <ul class="dropdown">
+          <li><a href="#">Play</a></li>
+          <li><a href="#">Find Friends</a></li>
+          <li><a href="#">Settings</a></li>
+         </ul>
+       </li>
+    </ul>
 
-<form method="POST" action ='/'>
-  <button type='submit' class="button">Scissors</button>
-</form>
+    <!-- Left Nav Section -->
+    <ul class="left">
+      <li><a href="#">Invite Friends</a></li>
+    </ul>
+  </section>
+</nav>
+<style type="text/css">#special{margin-top: 20%;}</style>
+<div class = 'row' id='special'>
+  <div class = 'small-5 small-centered column'>
+    <td><a class="button"  href='#'>Rock</a></td>
+    <td><a class="button"  href='#'>Scissors</a></td>
+    <td><a class="button"  href='#'>Paper</a></td>
+  </div>
+</div>
