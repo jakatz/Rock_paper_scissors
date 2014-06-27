@@ -227,7 +227,6 @@ module RPS
           WHERE id = '#{gid}';
         SQL
         winner_id = @db_adapter.exec(command).values.first
-        binding.pry
         mark_winner(gid, winner_id.first.to_i)
       end
     end
