@@ -5,7 +5,6 @@ module RPS
     attr_reader :db_adapter
     def initialize
       @db_adapter = PG.connect(host: 'localhost', dbname: 'rps')
-      create_tables
     end
 
     def create_tables
@@ -71,8 +70,6 @@ module RPS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding rows to tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
     def add_player(username, password, win_count = 0, games_played = 0)
       command = <<-SQL
         INSERT INTO players(username, password, win_count, games_played)
@@ -103,14 +100,17 @@ module RPS
       SQL
 
       r = @db_adapter.exec(command).values.first
-      RPS::Round.new(r[0].to_i, r[1], r[2], r[3].to_i)
+      # ["1", "1", "r", "", "-1"]
+      # id, gid, p1move, p2move, winner
+      # TODO insert gid into table
+      RPS::Round.new(r[0].to_i, r[1].to_i, r[2], r[3], r[4].to_i)
     end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ selecting rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def list_players
       command = <<-SQL
-      SELECT * FROM players
+      SELECT * FROM players;
       SQL
       result = @db_adapter.exec( command )
       players = []
@@ -167,15 +167,15 @@ module RPS
       SELECT * FROM rounds
       WHERE id = '#{ rid }';
       SQL
-      result = @db_adapter.exec( command )[0]
-      RPS::Round.new( result['id'].to_i, result['player1_move'],
-        result['player2_move'], result['winner'].to_i)
+      r = @db_adapter.exec( command ).values.first
+
+      RPS::Round.new(r[0].to_i, r[1].to_i, r[2], r[3], r[4].to_i)
     end
 
     def list_games_by_player( player_id )
       command = <<-SQL
         SELECT * FROM games
-        WHERE player1 = '#{player_id}' OR player2 = '#{player_id}'
+        WHERE player1 = '#{player_id}' OR player2 = '#{player_id}';
       SQL
 
       result = @db_adapter.exec(command)
@@ -187,10 +187,12 @@ module RPS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ updating rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def mark_winner(game, player_id)
+    # TODO: change method to take in gid not game
+
+    def mark_winner(gid, player_id)
       command = <<-SQL
         UPDATE games SET winner = '#{ player_id }'
-        WHERE id = '#{game.id}';
+        WHERE id = '#{gid}';
         UPDATE players SET win_count = win_count+1
         WHERE id = '#{ player_id }';
       SQL
@@ -198,21 +200,41 @@ module RPS
       result = @db_adapter.exec(command)
     end
 
-    # do we ever use this method??
+    # TODO: mark round before or after round is over
 
-    # def mark_round( player1_id, player2_id )
-    #   command  = <<-SQL
-    #   UPDATE players SET games_played = games_played+1
-    #   WHERE id = '#{ player1_id }' OR id = '#{ player2_id }'
-    #   SQL
+    def mark_round( player1_id, player2_id )
+      command  = <<-SQL
+      UPDATE players SET games_played = games_played+1
+      WHERE id = '#{ player1_id }' OR id = '#{ player2_id }';
+      SQL
 
-    #   result = @db_adapter.exec(command)
-    # end
+      result = @db_adapter.exec(command)
+    end
+
+    def mark_game_winner(gid, player)
+      # we only call this function if someone has won the game
+      if player == 1
+          # UPDATE games SET winner = '#{player}'
+        command = <<-SQL
+          SELECT player1 FROM games
+          WHERE id = '#{gid}';
+        SQL
+        winner_id = @db_adapter.exec(command).values.first.first
+        mark_winner(gid, winner_id)
+      else
+        command = <<-SQL
+          SELECT player2 FROM games
+          WHERE id = '#{gid}';
+        SQL
+        winner_id = @db_adapter.exec(command).values.first
+        mark_winner(gid, winner_id.first.to_i)
+      end
+    end
 
     def add_move(round_id, player_id, player_move)
       command = <<-SQL
       UPDATE rounds SET player2_move = '#{ player_move }'
-      WHERE id = '#{round_id}'
+      WHERE id = '#{round_id}';
       SQL
 
       result = @db_adapter.exec(command)
@@ -223,7 +245,7 @@ module RPS
       # find moves
       command = <<-SQL
         SELECT player1_move, player2_move FROM rounds
-        WHERE id = '#{rid}'
+        WHERE id = '#{rid}';
       SQL
       result = @db_adapter.exec(command).values.first
       winner = play(result[0], result[1])
@@ -231,9 +253,34 @@ module RPS
       # update winner
       command = <<-SQL
         UPDATE rounds SET winner = '#{winner}'
-        WHERE id = '#{rid}'
+        WHERE id = '#{rid}';
       SQL
       @db_adapter.exec(command)
+      select_round(rid)
+      # check_if_gameover(rid)
+    end
+
+    def check_if_gameover(gid)
+      command = <<-SQL
+        SELECT COUNT(winner) FROM rounds
+        WHERE winner = 1;
+      SQL
+      result = @db_adapter.exec(command).values.first.first.to_i
+      if result < 3
+        # player1 didnt win, checking p2
+        command = <<-SQL
+          SELECT COUNT(winner) FROM rounds
+          WHERE winner = 2;
+        SQL
+        result = @db_adapter.exec(command).values.first.first.to_i
+        if result < 3
+          return -1
+        else
+          return mark_game_winner(gid, 2)
+        end
+      else
+        return mark_game_winner(gid, 1)
+      end
     end
   end
 
