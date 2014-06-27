@@ -14,8 +14,9 @@
         <a href="#">Options</a>
         <ul class="dropdown">
           <li><a href="#">Play</a></li>
-          <li><a href="#">Find Friends</a></li>
-          <li><a href="#">Settings</a></li>
+          <li><a href="/user/friends">Find Friends</a></li>
+          <li><a href="/sign_in">Sign out</a></li>
+
          </ul>
        </li>
     </ul>
@@ -56,7 +57,13 @@
         <tr>
           <td class='text-center' ><%= player1.username %></td>
           <td class='text-center'><%= player2.username %></td>
-          <td><button class = 'tiny'>review game</button></td>
+          <%if player2.username == session[:username]%>
+          <td><a href= '/user/game/second_move?game_id=<%=game.id%>&player2=<%=player2.id%>' class = ' button tiny'>review game</a></td>
+          <%else%>
+          <td><a href= '/user/game/review?game_id=<%=game.id%>&player2=<%=player2.id%>' class = ' button tiny'>review game</a></td>
+          <%end%>
+
+
         </tr>
        <% end %>
       </tbody>
@@ -81,7 +88,7 @@
         <tr>
           <td class='text-center' ><%= player1.username %></td>
           <td class='text-center'><%= player2.username %></td>
-          <td><button class = 'tiny'>review game</button></td>
+          <td><a href = '/user/game/review' class = 'tiny'>review game</a></td>
         </tr>
        <% end %>
       </tbody>

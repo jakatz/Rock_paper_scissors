@@ -8,3 +8,4 @@ class RPS::Round
     @winner = winner # 0 tie, 1 for player1, 2 for player2
   end
 end
+

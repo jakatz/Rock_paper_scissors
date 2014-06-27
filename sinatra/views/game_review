@@ -1,0 +1,60 @@
+
+<nav class="top-bar" data-topbar>
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">R P S</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
+  </ul>
+  <section class="top-bar-section">
+    <!-- Right Nav Section -->
+    <ul class="right">
+      <li class="has-dropdown">
+        <a href="#">Options</a>
+        <ul class="dropdown">
+          <li><a href="/user/game">Play</a></li>
+          <li><a href="/user/friends">Find Friends</a></li>
+          <li><a href="/sign_in">Sign out</a></li>
+
+         </ul>
+       </li>
+    </ul>
+
+    <!-- Left Nav Section -->
+    <ul class="left">
+      <li><a href="#">Invite Friends</a></li>
+    </ul>
+  </section>
+</nav>
+<style type="text/css">#special{margin-top: 20%;}</style>
+<div class = 'row' id='special'>
+  <div class = 'text-center'>
+    <h1>Pick a move.</h1>
+  </div>
+
+</div>
+<% unless @rounds == [] %>
+<div class = 'row'>
+  <div class = 'small-4 small-centered column text-center'>
+    <table>
+    <thead>
+      <tr>
+        <th>Player 1 Move</th>
+        <th>Player 2 Move</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% unless @rounds.nil?%>
+      <% @rounds.each do |round| %>
+      <tr>
+        <td><%= round.player1_move %></td>
+        <td><%= round.player2_move %></td>
+      </tr>
+      <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% end %>
+</div>

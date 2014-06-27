@@ -1,3 +1,4 @@
+
 require 'pg'
 
 module RPS
@@ -172,6 +173,8 @@ module RPS
       RPS::Round.new(r[0].to_i, r[1].to_i, r[2], r[3], r[4].to_i)
     end
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ listing table values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     def list_games_by_player( player_id )
       command = <<-SQL
         SELECT * FROM games
@@ -183,6 +186,13 @@ module RPS
         RPS::Game.new( game['id'].to_i, game['player1'].to_i,
         game['player2'].to_i, game['winner'].to_i )
       end
+    end
+
+    def list_rounds_by_game( game_id )
+      command = <<-SQL
+        SELECT * FROM rounds
+        WHERE game
+      SQL
     end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ updating rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,14 +230,14 @@ module RPS
           WHERE id = '#{gid}';
         SQL
         winner_id = @db_adapter.exec(command).values.first.first
-        mark_winner(gid, winner_id)
+        mark_winner(gid, winner_id.to_i)
       else
         command = <<-SQL
           SELECT player2 FROM games
           WHERE id = '#{gid}';
         SQL
-        winner_id = @db_adapter.exec(command).values.first
-        mark_winner(gid, winner_id.first.to_i)
+        winner_id = @db_adapter.exec(command).values.first.first
+        mark_winner(gid, winner_id.to_i)
       end
     end
 
@@ -256,21 +266,21 @@ module RPS
         WHERE id = '#{rid}';
       SQL
       @db_adapter.exec(command)
-      select_round(rid)
-      # check_if_gameover(rid)
+      round = select_round(rid)
+      check_if_gameover(round.game_id)
     end
 
     def check_if_gameover(gid)
       command = <<-SQL
         SELECT COUNT(winner) FROM rounds
-        WHERE winner = 1;
+        WHERE winner = 1, game_id = '#{gid}';
       SQL
       result = @db_adapter.exec(command).values.first.first.to_i
       if result < 3
         # player1 didnt win, checking p2
         command = <<-SQL
           SELECT COUNT(winner) FROM rounds
-          WHERE winner = 2;
+          WHERE winner = 2, game_id = '#{gid}';
         SQL
         result = @db_adapter.exec(command).values.first.first.to_i
         if result < 3
