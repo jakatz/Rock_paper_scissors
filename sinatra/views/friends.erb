@@ -13,9 +13,10 @@
       <li class="has-dropdown">
         <a href="#">Options</a>
         <ul class="dropdown">
-          <li><a href="#">Play</a></li>
+          <li><a href="/user/game">Play</a></li>
           <li><a href="#">Find Friends</a></li>
-          <li><a href="#">Settings</a></li>
+          <li><a href="/sign_in">Sign out</a></li>
+
          </ul>
        </li>
     </ul>
@@ -48,14 +49,16 @@
         </tr>
       </thead>
       <tbody>
-      <% players = RPS.orm.list_players%>
+      <% players = RPS.orm.list_players %>
       <%  players.each do |player| %>
+        <% if player.username != session[:username] %>
         <tr>
           <td><%= player.username %></td>
           <td><%= player.win_count%></td>
           <td><%= player.games_played%></td>
-          <td><a class=" button tiny"  href='/gameplay?player2=<%= player.username %>'>Challenge Player</a></td>
+          <td><a class=" button tiny"  href='/user/game/first_move?player2=<%= player.username %>'>Challenge Player</a></td>
         </tr>
+        <% end %>
         <% end %>
       </tbody>
     </table>
