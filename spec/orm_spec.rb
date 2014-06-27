@@ -209,6 +209,8 @@ describe 'ORM' do
         RPS.orm.add_move(round.id, p2.id, 'r')
         round = RPS.orm.initialize_round(g.id, 's')
         RPS.orm.add_move(round.id, p2.id, 'r')
+        round = RPS.orm.initialize_round(g.id, 'r')
+        RPS.orm.add_move(round.id, p2.id, 's')
         round = RPS.orm.initialize_round(g.id, 's')
         RPS.orm.add_move(round.id, p2.id, 'r')
 
