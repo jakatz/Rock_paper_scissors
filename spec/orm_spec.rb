@@ -162,5 +162,16 @@ describe 'ORM' do
         end
       end
     end
+    describe '#set_winner' do
+      it 'sets the winner after player2 moves' do
+        p1 = RPS.orm.add_player('Gideon', '1234')
+        p2 = RPS.orm.add_player('Jon', '321')
+        g = RPS.orm.add_game(p1.id, p2.id)
+        round = RPS.orm.initialize_round(g.id, 'r')
+        RPS.orm.add_move(round.id, p2.id, 's')
+
+        expect(RPS.orm.select_round(round.id).winner).to eq(1)
+      end
+    end
   end
 end
