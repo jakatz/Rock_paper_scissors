@@ -28,9 +28,31 @@
 </nav>
 <style type="text/css">#special{margin-top: 20%;}</style>
 <div class = 'row' id='special'>
-  <div class = 'small-5 small-centered column'>
-    <td><a class="button"  href='#'>Rock</a></td>
-    <td><a class="button"  href='#'>Scissors</a></td>
-    <td><a class="button"  href='#'>Paper</a></td>
+  <div class = 'text-center'>
+    <h1>Pick a move.</h1>
   </div>
+  <div class = 'small-5 small-centered column text-center'>
+    <td><a class="button"  href='/game?move=r&game_id=<%= @game.id %>'>Rock</a></td>
+    <td><a class="button"  href='/game?move=s&game_id=<%= @game.id %>'>Scissors</a></td>
+    <td><a class="button"  href='/game?move=p&game_id=<%= @game.id %>'>Paper</a></td>
+  </div>
+</div>
+
+<div class = 'row'>
+  <div class = 'small-4 small-centered column text-center'>
+    <table>
+    <thead>
+      <tr>
+        <th>Player 1 Move</th>
+        <th>Player 2 Move</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 </div>

@@ -185,6 +185,13 @@ module RPS
       end
     end
 
+    def list_rounds_by_game( game_id )
+      command = <<-SQL
+        SELECT * FROM rounds
+        WHERE game
+      SQL
+    end
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ updating rows in tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # TODO: change method to take in gid not game
